@@ -1,52 +1,3 @@
-<script setup lang="ts">
-const { signUp, useSession } = useAuth();
-const router = useRouter();
-const { data: session } = await useSession();
-
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
-const error = ref('');
-const loading = ref(false);
-
-// Redirect if already signed in
-watch(() => session.value?.user, (user) => {
-  if (user) {
-    router.push('/');
-  }
-}, { immediate: true });
-
-async function handleSubmit() {
-  error.value = '';
-
-  if (password.value !== confirmPassword.value) {
-    error.value = 'Passwords do not match';
-    return;
-  }
-
-  if (password.value.length < 8) {
-    error.value = 'Password must be at least 8 characters';
-    return;
-  }
-
-  loading.value = true;
-
-  try {
-    const result = await signUp(email.value, password.value, name.value);
-    if (result.error) {
-      error.value = result.error.message || 'Sign up failed';
-    } else {
-      router.push('/');
-    }
-  } catch {
-    error.value = 'An unexpected error occurred';
-  } finally {
-    loading.value = false;
-  }
-}
-</script>
-
 <template>
   <div class="flex min-h-screen items-center justify-center bg-background">
     <div class="w-full max-w-md space-y-6 rounded-lg border border-border bg-card p-8">
@@ -136,3 +87,47 @@ async function handleSubmit() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { authClient } from '~/lib/auth-client';
+
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const error = ref('');
+const loading = ref(false);
+
+async function handleSubmit() {
+  error.value = '';
+
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Passwords do not match';
+    return;
+  }
+
+  if (password.value.length < 8) {
+    error.value = 'Password must be at least 8 characters';
+    return;
+  }
+
+  loading.value = true;
+
+  try {
+    const { error: signUpError } = await authClient.signUp.email({
+      email: email.value,
+      password: password.value,
+      name: name.value,
+    });
+    if (signUpError) {
+      error.value = signUpError.message || 'Sign up failed';
+    } else {
+      await navigateTo('/');
+    }
+  } catch {
+    error.value = 'An unexpected error occurred';
+  } finally {
+    loading.value = false;
+  }
+}
+</script>

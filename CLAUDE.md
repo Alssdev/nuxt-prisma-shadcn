@@ -9,6 +9,8 @@
 - use single quotes
 - use semicolon
 - tell the user (me) if he is wrong
+- use Nuxt MCP Server
+- use Prisma ORM MCP Server
 
 ## Don't
 - do not create custom css clases, use tailwindcss always.
@@ -20,6 +22,7 @@
 - do not use `any` as type in .ts files
 - don't add design, testing or dir structures in .md plan files.
 - don't modify package-lock.json manually
+- avoid using @@map in prisma schema
 
 ## Commands
 ### Type check a single file by path

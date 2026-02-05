@@ -1,39 +1,3 @@
-<script setup lang="ts">
-const { signIn, useSession } = useAuth();
-const router = useRouter();
-const { data: session } = await useSession();
-
-const email = ref('');
-const password = ref('');
-const error = ref('');
-const loading = ref(false);
-
-// Redirect if already signed in
-watch(() => session.value?.user, (user) => {
-  if (user) {
-    router.push('/');
-  }
-}, { immediate: true });
-
-async function handleSubmit() {
-  error.value = '';
-  loading.value = true;
-
-  try {
-    const result = await signIn(email.value, password.value);
-    if (result.error) {
-      error.value = result.error.message || 'Sign in failed';
-    } else {
-      router.push('/');
-    }
-  } catch {
-    error.value = 'An unexpected error occurred';
-  } finally {
-    loading.value = false;
-  }
-}
-</script>
-
 <template>
   <div class="flex min-h-screen items-center justify-center bg-background">
     <div class="w-full max-w-md space-y-6 rounded-lg border border-border bg-card p-8">
@@ -95,3 +59,32 @@ async function handleSubmit() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { authClient } from '~/lib/auth-client';
+
+const email = ref('');
+const password = ref('');
+const error = ref('');
+const loading = ref(false);
+
+async function handleSubmit() {
+  error.value = '';
+  loading.value = true;
+
+  try {
+    const { error: signInError } = await authClient.signIn.email({
+      email: email.value,
+      password: password.value,
+      callbackURL: '/',
+    });
+    if (signInError) {
+      error.value = signInError.message || 'Sign in failed';
+    }
+  } catch {
+    error.value = 'An unexpected error occurred';
+  } finally {
+    loading.value = false;
+  }
+}
+</script>

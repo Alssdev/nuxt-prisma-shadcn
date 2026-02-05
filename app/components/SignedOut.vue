@@ -1,8 +1,9 @@
-<script setup lang="ts">
-const { useSession } = useAuth();
-const { data: session } = await useSession();
-</script>
-
 <template>
-  <slot v-if="!session?.user" />
+  <client-only>
+    <slot v-if="!session?.user" />
+  </client-only>
 </template>
+
+<script setup lang="ts">
+const session = await useSession();
+</script>
