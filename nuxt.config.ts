@@ -5,6 +5,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  components: {
+    dirs: []
+  },
+
   modules: [
     '@pinia/nuxt',
     '@nuxt/eslint',

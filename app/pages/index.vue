@@ -54,6 +54,8 @@ import 'vue-sonner/style.css'
 import { toast } from 'vue-sonner'
 import { authClient } from '~/lib/auth-client';
 import { Button } from '@/components/ui/button'
+import SignedOut from '~/components/SignedOut.vue';
+import SignedIn from '~/components/SignedIn.vue';
 
 const loading = ref(false);
 

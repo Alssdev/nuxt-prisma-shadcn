@@ -1,5 +1,8 @@
 # CLAUDE.md
 
+# Important
+- components auto imports are disabled
+
 ## Do
 - use Nuxt4
 - use Pinia as State Manager
