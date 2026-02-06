@@ -1,5 +1,3 @@
 import { createAuthClient } from 'better-auth/vue';
 
-export const authClient = createAuthClient({
-  baseURL: process.env.NUXT_PUBLIC_APP_URL,
-});
+export const authClient = createAuthClient();

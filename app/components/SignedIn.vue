@@ -1,9 +1,9 @@
 <template>
-  <client-only>
-    <slot v-if="session?.user" :user="session.user" />
-  </client-only>
+  <ClientOnly>
+    <slot v-if="!isPending && user" :user="user" />
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
-const session = await useSession();
+const { user, isPending } = await useSession();
 </script>
