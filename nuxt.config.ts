@@ -8,7 +8,21 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxt/eslint',
+    'shadcn-nuxt',
+    '@vueuse/nuxt',
   ],
+
+  shadcn: {
+    /**
+      * Prefix for all the imported component
+      */
+    prefix: '',
+    /**
+      * Directory that the component lives in.
+      * @default "./components/ui"
+      */
+    componentDir: '@/app/components/ui'
+  },
 
   runtimeConfig: {
     public: {

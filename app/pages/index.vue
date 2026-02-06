@@ -41,12 +41,19 @@
           </button>
         </div>
       </SignedIn>
+      <div>
+        <Button @click="() => toast.success('Hello!')">Test Toast</Button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import 'vue-sonner/style.css'
+
+import { toast } from 'vue-sonner'
 import { authClient } from '~/lib/auth-client';
+import { Button } from '@/components/ui/button'
 
 const loading = ref(false);
 

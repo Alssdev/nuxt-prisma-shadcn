@@ -14,6 +14,7 @@
     "@prisma/adapter-mariadb": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@tailwindcss/vite": "^4.1.18",
+    "@vueuse/nuxt": "^14.2.0",
     "better-auth": "^1.4.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -21,10 +22,13 @@
     "mariadb": "^3.4.5",
     "morgan": "^1.10.1",
     "nuxt": "^4.3.0",
+    "reka-ui": "^2.8.0",
+    "shadcn-nuxt": "^2.4.3",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4",
+    "vue-sonner": "^2.0.9",
     "zod": "^4.3.6"
   },
   "devDependencies": {
