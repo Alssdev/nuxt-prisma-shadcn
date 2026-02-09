@@ -14,6 +14,7 @@
 - tell the user (me) if he is wrong
 - use Nuxt MCP Server
 - use Prisma ORM MCP Server
+- ignore generated/prisma, prisma/migrations, app/components/ui
 
 ## Don't
 - do not create custom css clases, use tailwindcss always.
