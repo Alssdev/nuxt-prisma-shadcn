@@ -2,14 +2,7 @@ import { describe, it, expect, afterAll } from 'vitest';
 import { setup, fetch } from '@nuxt/test-utils/e2e';
 import { PrismaClient } from '../../generated/prisma/client.js';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-
-const TEST_USER = {
-  name: 'Test User',
-  email: 'test@example.com',
-  password: 'Password123!',
-};
-
-let sessionCookie = '';
+import { TEST_USER, signUp, signIn, getSessionCookie, getSession } from './utils';
 
 await setup({
   server: true,
@@ -19,6 +12,8 @@ await setup({
 
 const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
 const prisma = new PrismaClient({ adapter });
+
+let sessionCookie = '';
 
 afterAll(async () => {
   await prisma.session.deleteMany();
@@ -31,25 +26,16 @@ afterAll(async () => {
 describe('Auth API', () => {
   describe('POST /api/auth/sign-up/email', () => {
     it('creates a new user and returns user data', async () => {
-      const res = await fetch('/api/auth/sign-up/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(TEST_USER),
-      });
+      const { res, body } = await signUp();
 
       expect(res.status).toBe(200);
-      const body = await res.json();
       expect(body.user).toBeDefined();
       expect(body.user.email).toBe(TEST_USER.email);
       expect(body.user.name).toBe(TEST_USER.name);
     });
 
     it('returns error for duplicate email', async () => {
-      const res = await fetch('/api/auth/sign-up/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(TEST_USER),
-      });
+      const { res } = await signUp();
 
       expect(res.status).not.toBe(200);
     });
@@ -67,46 +53,24 @@ describe('Auth API', () => {
 
   describe('POST /api/auth/sign-in/email', () => {
     it('signs in with valid credentials and returns session cookie', async () => {
-      const res = await fetch('/api/auth/sign-in/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: TEST_USER.email,
-          password: TEST_USER.password,
-        }),
-      });
+      const { res, body } = await signIn();
 
       expect(res.status).toBe(200);
       const cookies = res.headers.get('set-cookie');
       expect(cookies).toBeTruthy();
       sessionCookie = cookies!;
-      const body = await res.json();
       expect(body.user).toBeDefined();
       expect(body.user.email).toBe(TEST_USER.email);
     });
 
     it('returns error for wrong password', async () => {
-      const res = await fetch('/api/auth/sign-in/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: TEST_USER.email,
-          password: 'WrongPassword!',
-        }),
-      });
+      const { res } = await signIn(TEST_USER.email, 'WrongPassword!');
 
       expect(res.status).not.toBe(200);
     });
 
     it('returns error for non-existent email', async () => {
-      const res = await fetch('/api/auth/sign-in/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: 'nonexistent@example.com',
-          password: 'Password123!',
-        }),
-      });
+      const { res } = await signIn('nonexistent@example.com', 'Password123!');
 
       expect(res.status).not.toBe(200);
     });
@@ -114,12 +78,9 @@ describe('Auth API', () => {
 
   describe('GET /api/auth/get-session', () => {
     it('returns user session when valid cookie is provided', async () => {
-      const res = await fetch('/api/auth/get-session', {
-        headers: { cookie: sessionCookie },
-      });
+      const { res, body } = await getSession(sessionCookie);
 
       expect(res.status).toBe(200);
-      const body = await res.json();
       expect(body.user).toBeDefined();
       expect(body.user.email).toBe(TEST_USER.email);
     });
