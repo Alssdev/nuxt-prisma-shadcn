@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     'shadcn-nuxt',
     '@vueuse/nuxt',
+    '@nuxt/test-utils/module',
   ],
 
   shadcn: {
@@ -25,7 +26,7 @@ export default defineNuxtConfig({
       * Directory that the component lives in.
       * @default "./components/ui"
       */
-    componentDir: '@/app/components/ui'
+    componentDir: '@/components/ui'
   },
 
   runtimeConfig: {
@@ -38,5 +39,5 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
-  },
+  }
 })
