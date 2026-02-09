@@ -1,0 +1,42 @@
+name: Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: Password@123
+          MARIADB_DATABASE: starter_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mariadb-admin ping -pPassword@123"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: mysql://root:Password%40123@localhost:3306/starter_test
+
+      - name: Run server tests
+        run: npm run test:server -- --run
+        env:
+          DATABASE_URL: mysql://root:Password%40123@localhost:3306/starter_test
+          NUXT_PUBLIC_APP_URL: http://localhost:3000
+          BETTER_AUTH_SECRET: test-secret-key-for-github-actions-minimum-32-chars
