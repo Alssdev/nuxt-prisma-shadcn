@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
+    "db:migrate": "prisma migrate deploy",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "prisma generate && nuxt prepare"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.3",
