@@ -2,8 +2,9 @@ import type { EventHandler, EventHandlerRequest, H3Event } from 'h3';
 
 /**
  * Wraps a Nitro event handler with error monitoring.
- * Client errors (4xx) are re-thrown as-is.
- * Unexpected errors trigger a notification email and are re-thrown.
+ * - create400Error: re-thrown as-is, no notification.
+ * - createBUGError (fatal): re-thrown as-is, sends notification.
+ * - create500Error / unexpected errors: sends notification, throws create500Error.
  */
 export default function defineWrappedHandler<T extends EventHandlerRequest, D>(
   handler: (event: H3Event<T>) => D | Promise<D>,
@@ -17,22 +18,29 @@ export default function defineWrappedHandler<T extends EventHandlerRequest, D>(
       }
 
       await notifyError(event, error);
-      throw error;
+
+      if (isFatalError(error)) {
+        throw error;
+      }
+
+      throw create500Error();
     }
   });
 }
 
-function isClientError(error: unknown): boolean {
-  if (
-    error !== null
+function isH3Error(error: unknown): error is { statusCode: number; fatal?: boolean } {
+  return error !== null
     && typeof error === 'object'
     && 'statusCode' in error
-    && typeof (error as { statusCode: unknown }).statusCode === 'number'
-  ) {
-    const code = (error as { statusCode: number }).statusCode;
-    return code >= 400 && code < 500;
-  }
-  return false;
+    && typeof (error as { statusCode: unknown }).statusCode === 'number';
+}
+
+function isClientError(error: unknown): boolean {
+  return isH3Error(error) && error.statusCode >= 400 && error.statusCode < 500 && !error.fatal;
+}
+
+function isFatalError(error: unknown): boolean {
+  return isH3Error(error) && !!error.fatal;
 }
 
 async function notifyError(event: H3Event, error: unknown): Promise<void> {
