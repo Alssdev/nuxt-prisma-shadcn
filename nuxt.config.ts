@@ -31,7 +31,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     resendApiKey: process.env.NUXT_RESEND_API_KEY,
-    taskFailureNotificationEmail: process.env.NUXT_TASK_FAILURE_NOTIFICATION_EMAIL,
+    errorNotificationEmail: process.env.NUXT_ERROR_NOTIFICATION_EMAIL,
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL,
     },
