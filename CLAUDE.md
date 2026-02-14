@@ -15,6 +15,7 @@
 - use Nuxt MCP Server
 - use Prisma ORM MCP Server
 - ignore generated/prisma, prisma/migrations, app/components/ui
+- use defineWrappedHandler for server routes
 
 ## Don't
 - do not create custom css clases, use tailwindcss always.
